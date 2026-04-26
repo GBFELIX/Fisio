@@ -68,13 +68,16 @@ namespace PlanTributario.Controllers
 
         public IActionResult Create()
         {
+            ModelState.Remove("ProntuarioPath");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Data,Descricao,ValorBruto,TipoAtendimento")] Lancamento lancamento, IFormFile arquivoProntuario)
+        public async Task<IActionResult> Create([Bind("Id,Data,Descricao,ValorBruto,TipoAtendimento,ProntuarioPath")] Lancamento lancamento, IFormFile arquivoProntuario)
         {
+            ModelState.Remove("ProntuarioPath");
+            ModelState.Remove("arquivoProntuario");
             if (ModelState.IsValid)
             {
                 if (arquivoProntuario != null && arquivoProntuario.Length > 0)

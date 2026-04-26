@@ -113,5 +113,31 @@ namespace PlanTributario.Controllers
             }
             return View(model);
         }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var prontuario = await _context.Prontuario
+                .Include(p => p.Paciente)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (prontuario == null) return NotFound();
+
+            return View(prontuario);
+        }
+
+        // POST: Prontuarios/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var prontuario = await _context.Prontuario.FindAsync(id);
+            if (prontuario != null)
+            {
+                _context.Prontuario.Remove(prontuario);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

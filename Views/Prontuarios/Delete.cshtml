@@ -1,0 +1,59 @@
+﻿@model PlanTributario.Models.Prontuario
+
+@{
+    ViewData["Title"] = "Excluir Prontuário";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-danger text-white p-3">
+                    <h4 class="mb-0"><i class="fas fa-trash-alt me-2"></i> Excluir Registro Clínico</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning border-0 shadow-sm mb-4">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Atenção:</strong> Você está prestes a excluir o prontuário do dia
+                        <strong>@Model.DataAtendimento.ToString("dd/MM/yyyy")</strong>.
+                        O lançamento financeiro continuará existindo, mas os dados clínicos serão perdidos.
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-sm-4 text-muted text-uppercase small fw-bold">Paciente:</div>
+                        <div class="col-sm-8 fw-bold fs-5 text-primary">@Model.Paciente.Nome</div>
+                    </div>
+
+                    <div class="bg-light p-3 rounded mb-4 border">
+                        <h6 class="fw-bold border-bottom pb-2 mb-3 text-secondary uppercase">Resumo do Conteúdo:</h6>
+                        <p><strong>Queixa Principal:</strong> @(Model.QueixaPrincipal ?? "Não informada")</p>
+                        <p><strong>Evolução:</strong> <span class="text-muted italic">@(Model.Evolucao?.Length > 100 ? Model.Evolucao.Substring(0, 100) + "..." : Model.Evolucao)</span></p>
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                                <i class="fas fa-times me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger btn-lg px-5 shadow fw-bold">
+                                <i class="fas fa-trash-alt me-1"></i> Confirmar Exclusão
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+</style>

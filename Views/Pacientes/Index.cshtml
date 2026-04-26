@@ -62,6 +62,9 @@
                                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
                                             <i class="fas fa-eye"></i>
                                         </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -89,5 +92,23 @@
 
     .btn-group .btn {
         padding: 0.4rem 0.8rem;
+    }
+
+    html, body {
+        height: 100%;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    main {
+        flex: 1; /* Faz o conteúdo principal "empurrar" o rodapé para baixo */
+    }
+
+    .footer {
+        width: 100%;
+        background-color: white;
     }
 </style>

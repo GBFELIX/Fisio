@@ -5,6 +5,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<Data_>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Data_") ?? throw new InvalidOperationException("Connection string 'Data_' not found.")));
 
+//builder.Services.AddDbContext<Data_>(options =>
+//    options.UseSqlite("Data Source=Planejamento.db"));
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var context = services.GetRequiredService<Data_>();
+//    context.Database.Migrate(); // Cria o banco e as tabelas se não existirem
+//}
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
