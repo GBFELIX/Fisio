@@ -1,0 +1,99 @@
+﻿@model PlanTributario.Models.Lancamento
+
+@{
+    ViewData["Title"] = "Editar Lançamento";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Ajustar Atendimento</h4>
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="card-body">
+                    @* CRÍTICO: Adicionado enctype para permitir upload de arquivos *@
+                    <form asp-action="Edit" enctype="multipart/form-data" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        @* CRÍTICO: Mantém o caminho do prontuário atual se não for alterado *@
+                        <input type="hidden" asp-for="ProntuarioPath" />
+
+                        <div class="row">
+                            <div class="form-group col-md-6 mb-3">
+                                <label asp-for="Data" class="control-label font-weight-bold">Data do Atendimento</label>
+                                <input asp-for="Data" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="Data" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group col-md-6 mb-3">
+                                <label asp-for="TipoAtendimento" class="control-label font-weight-bold">Tipo</label>
+                                <select asp-for="TipoAtendimento" class="form-control">
+                                    <option value="Particular">Particular</option>
+                                    <option value="Clinica">Clínica</option>
+                                </select>
+                                <span asp-validation-for="TipoAtendimento" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Descricao" class="control-label font-weight-bold">Paciente / Descrição</label>
+                            <input asp-for="Descricao" class="form-control" placeholder="Ex: Atendimento João Silva" />
+                            <span asp-validation-for="Descricao" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="ValorBruto" class="control-label font-weight-bold">Valor Bruto (R$)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input asp-for="ValorBruto" class="form-control form-control-lg text-primary font-weight-bold" type="number" step="0.01" inputmode="decimal" />
+                            </div>
+                            <span asp-validation-for="ValorBruto" class="text-danger"></span>
+                        </div>
+
+                        @* SEÇÃO DE PRONTUÁRIO *@
+                        <div class="card border-info mb-4">
+                            <div class="card-body">
+                                <label class="form-label font-weight-bold text-info">
+                                    <i class="fas fa-file-medical"></i> Prontuário Médico
+                                </label>
+
+                                @if (!string.IsNullOrEmpty(Model.ProntuarioPath))
+                                {
+                                    <div class="d-flex align-items-center mb-3 p-2 bg-light rounded border">
+                                        <i class="fas fa-file-pdf fa-2x text-danger me-3"></i>
+                                        <div>
+                                            <small class="d-block text-muted">Arquivo atual:</small>
+                                            <a href="~/uploads/@Model.ProntuarioPath" target="_blank" class="text-decoration-none fw-bold">
+                                                Visualizar Documento Salvo
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="input-group">
+                                    <input type="file" name="novoArquivo" class="form-control" id="inputGroupFile02" accept=".pdf,.jpg,.jpeg,.png">
+                                    <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                                </div>
+                                <small class="form-text text-muted">Selecione um arquivo apenas se desejar substituir o atual.</small>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <div class="form-group d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Voltar à Lista
+                            </a>
+                            <button type="submit" class="btn btn-warning btn-lg px-5 shadow-sm">
+                                <strong>Salvar Alterações</strong>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

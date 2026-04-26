@@ -1,0 +1,240 @@
+﻿@model IEnumerable<PlanTributario.Models.Lancamento>
+
+@{
+    ViewData["Title"] = "Gestão de Atendimento";
+    decimal totalLiquidoAcumulado = Model.Sum(x => x.ValorBruto - x.ImpostoDas - x.Inss);
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 text-primary mb-0">Fluxo de Caixa</h1>
+            <p class="text-muted">Gestão de Faturamento - Fisioterapia</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Relatorio" class="btn btn-outline-primary btn-lg shadow-sm">
+                <i class="fas fa-file-invoice-dollar"></i> Gerar Relatório
+            </a>
+            <button type="button" class="btn btn-success btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#modalCreate">
+                <i class="fas fa-plus"></i> Novo Atendimento
+            </button>
+        </div>
+    </div>
+
+    @* Card de Meta Atualizado *@
+    <div class="card shadow-sm mb-4 border-left-success">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title text-muted mb-0"><i class="fas fa-bullseye"></i> Meta</h5>
+                <button class="btn btn-sm btn-outline-secondary" onclick="atualizarMeta()">
+                    <i class="fas fa-edit"></i> Alterar Meta
+                </button>
+            </div>
+
+            <div class="progress mb-2" style="height: 30px; border-radius: 15px;">
+                <div id="progressBarMeta" class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                     role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    0%
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-2">
+                <span class="h5 mb-0 text-success fw-bold">@totalLiquidoAcumulado.ToString("C") acumulados</span>
+                <span id="txtMeta" class="h5 mb-0 text-muted">Meta: R$ 0,00</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th width="40"><input type="checkbox" id="checkall" class="form-check-input" /></th>
+                        <th>Data</th>
+                        <th>Paciente / Descrição</th>
+                        <th>Tipo</th>
+                        <th>Valor Bruto</th>
+                        <th class="text-danger">DAS/INSS</th>
+                        <th class="text-success">Líquido</th>
+                        <th class="text-center">Prontuário</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <form asp-action="BaixarExcel" method="post">
+                <tbody>
+                    @foreach (var item in Model.OrderByDescending(x => x.Data))
+                    {
+                        <tr>
+                            <td class="text-center">
+                                <input type="checkbox" class="checkbox-item form-check-input" value="@item.Id" name="Selecionados" />
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span>@item.Data.ToString("dd/MM/yyyy")</span>
+                                    <small class="text-muted">@item.Data.ToString("HH:mm")</small>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fw-bold">@item.Descricao</span>
+                            </td>
+                            <td>
+                                <span class="badge @(item.TipoAtendimento == "Particular" ? "bg-success" : "bg-info") rounded-pill">
+                                    @item.TipoAtendimento
+                                </span>
+                            </td>
+                            <td>@item.ValorBruto.ToString("C")</td>
+                            <td class="text-danger small">
+                                <div>DAS: @item.ImpostoDas.ToString("C")</div>
+                                <div>INSS: @item.Inss.ToString("C")</div>
+                            </td>
+                            <td class="text-success fw-bold">
+                                @((item.ValorBruto - item.ImpostoDas - item.Inss).ToString("C"))
+                            </td>
+                            <td class="text-center">
+                                @if (!string.IsNullOrEmpty(item.ProntuarioPath))
+                                {
+                                    <a href="~/uploads/@item.ProntuarioPath" target="_blank" class="btn btn-sm btn-light text-danger shadow-sm" title="Ver PDF">
+                                        <i class="fas fa-file-pdf fa-lg"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-link text-muted text-decoration-none" title="Anexar Prontuário">
+                                        <i class="fas fa-file-upload"></i> <small>Subir</small>
+                                    </a>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group shadow-sm">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm">Editar</a>
+
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm">Detalhes</a>
+
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm">Excluir</a>
+                                    @* <a asp-controller="Prontuarios"
+                                       asp-action="Criar"
+                                       asp-route-lancamentoId="@item.Id"
+                                       asp-route-pacienteId="@item.Id"
+                                       class="btn btn-sm btn-primary">
+                                        Fazer Prontuário
+                                    </a> *@
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                </form>
+            </table>
+        </div>
+        <div class="card-footer bg-white py-3">
+            <div class="row text-center text-md-end fw-bold text-uppercase">
+                <div class="col-md-3 offset-md-3">Bruto: <span class="text-primary">@Model.Sum(x => x.ValorBruto).ToString("C")</span></div>
+                <div class="col-md-3">Líquido Total: <span class="text-success">@totalLiquidoAcumulado.ToString("C")</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="modalCreateLabel">Novo Atendimento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @await Html.PartialAsync("Create", new PlanTributario.Models.Lancamento())
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-left-success {
+        border-left: 5px solid #28a745 !important;
+    }
+
+    .table thead th {
+        border-top: none;
+    }
+
+    .card {
+        border-radius: 10px;
+    }
+
+    .btn-close-white {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .border-left-success {
+        border-left: 6px solid #28a745 !important;
+    }
+
+    .table thead th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 12px;
+    }
+
+    .progress {
+        background-color: #e9ecef;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+    }
+
+    .btn-group .btn {
+        padding: 0.4rem 0.8rem;
+    }
+
+    .badge {
+        padding: 0.5em 0.8em;
+    }
+</style>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script src="~/js/site.js"></script>
+    }
+
+    <script>
+        const acumulado = @totalLiquidoAcumulado.ToString().Replace(",", ".");
+
+        function carregarMeta() {
+            let metaSalva = localStorage.getItem('metaFinanceira') || 40000;
+            const meta = parseFloat(metaSalva);
+
+            let porcentagem = (acumulado / meta) * 100;
+            if (porcentagem > 100) porcentagem = 100;
+
+            const barra = document.getElementById('progressBarMeta');
+            barra.style.width = porcentagem.toFixed(0) + '%';
+            barra.innerText = porcentagem.toFixed(0) + '%';
+            barra.setAttribute('aria-valuenow', porcentagem);
+
+            document.getElementById('txtMeta').innerText = "Meta: " + meta.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function atualizarMeta() {
+            const novaMeta = prompt("Digite o novo valor da meta (Ex: 45000):");
+            if (novaMeta !== null && !isNaN(novaMeta) && novaMeta > 0) {
+                localStorage.setItem('metaFinanceira', novaMeta);
+                carregarMeta();
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarMeta);
+
+        var myModal = document.getElementById('modalCreate');
+        myModal.addEventListener('shown.bs.modal', function () {
+            document.querySelector('input[name="ValorBruto"]').focus();
+        });
+    </script>
+}

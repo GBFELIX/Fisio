@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "Painel de Controle";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-dark">Olá, Dra. Suely! 👋</h2>
+            <p class="text-muted">Aqui está o resumo da sua clínica para hoje, @DateTime.Now.ToString("dd 'de' MMMM").</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-primary text-white h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase mb-1 opacity-75">Total de Pacientes</h6>
+                            <h2 class="mb-0 fw-bold">Puxar do Banco...</h2>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-success text-white h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase mb-1 opacity-75">Faturamento Mensal</h6>
+                            <h2 class="mb-0 fw-bold">R$ @(ViewBag.TotalMes ?? "0,00")</h2>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                    </div>
+                    @* <small class="opacity-75">Meta Apartamento: 10% atingida</small> *@
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-info text-white h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase mb-1 opacity-75">Prontuários Hoje</h6>
+                            <h2 class="mb-0 fw-bold">Puxar...</h2>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5 class="fw-bold mb-3"><i class="fas fa-bolt text-warning me-2"></i>Ações Rápidas</h5>
+            <div class="d-flex gap-3 flex-wrap">
+                <a asp-controller="Pacientes" asp-action="Create" class="btn btn-white shadow-sm border p-3 text-center" style="width: 150px;">
+                    <i class="fas fa-user-plus d-block fs-3 mb-2 text-primary"></i>
+                    Novo Paciente
+                </a>
+                <a asp-controller="Lancamentoes" asp-action="Index" class="btn btn-white shadow-sm border p-3 text-center" style="width: 150px;">
+                    <i class="fas fa-plus-circle d-block fs-3 mb-2 text-success"></i>
+                    Novo Lançamento
+                </a>
+                <a asp-controller="Prontuarios" asp-action="Index" class="btn btn-white shadow-sm border p-3 text-center" style="width: 150px;">
+                    <i class="fas fa-print d-block fs-3 mb-2 text-info"></i>
+                    Ver Arquivo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h6 class="fw-bold mb-4">Evolução Financeira (Últimos 6 meses)</h6>
+                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 250px; border: 2px dashed #ddd;">
+                    <p class="text-muted">Gráfico será carregado aqui com Chart.js</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h6 class="fw-bold mb-3">Dica do Dia</h6>
+                <div class="alert alert-warning border-0 small">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Lembre-se de salvar os prontuários em PDF logo após o atendimento para manter o arquivo digital sempre em dia!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-white {
+        background-color: white;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .btn-white:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+            background-color: #fff;
+        }
+
+    .card {
+        border-radius: 15px;
+    }
+</style>

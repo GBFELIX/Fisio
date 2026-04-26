@@ -1,0 +1,65 @@
+﻿@model PlanTributario.Models.Lancamento
+
+@{
+    ViewData["Title"] = "Detalhes do Atendimento";
+}
+
+<div class="container">
+    <h1>Detalhes do Atendimento</h1>
+    <hr />
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Informações Gerais</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Data do Atendimento</dt>
+                <dd class="col-sm-9">@Model.Data.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                <dt class="col-sm-3">Descrição / Paciente</dt>
+                <dd class="col-sm-9">@Model.Descricao</dd>
+
+                <dt class="col-sm-3">Tipo de Atendimento</dt>
+                <dd class="col-sm-9">
+                    <span class="badge @(Model.TipoAtendimento == "Particular" ? "bg-success" : "bg-info")">
+                        @Model.TipoAtendimento
+                    </span>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Planejamento Tributário (Fator R)</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3 text-primary">Valor Bruto Recebido</dt>
+                <dd class="col-sm-9 text-primary font-weight-bold">@Model.ValorBruto.ToString("C")</dd>
+
+                <dt class="col-sm-3">Pró-Labore Gerado (28%)</dt>
+                <dd class="col-sm-9">@Model.ProLabore.ToString("C")</dd>
+
+                <dt class="col-sm-3 text-danger">Imposto Simples (DAS 6%)</dt>
+                <dd class="col-sm-9 text-danger">@Model.ImpostoDas.ToString("C")</dd>
+
+                <dt class="col-sm-3 text-danger">INSS s/ Pró-Labore (11%)</dt>
+                <dd class="col-sm-9 text-danger">@Model.Inss.ToString("C")</dd>
+
+                <hr />
+
+                <dt class="col-sm-3 text-success">Valor Líquido Real</dt>
+                <dd class="col-sm-9 text-success font-weight-bold" style="font-size: 1.2rem;">
+                    @Model.ValorLiquido.ToString("C")
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">Voltar para a Lista</a>
+    </div>
+</div>

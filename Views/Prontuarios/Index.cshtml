@@ -1,0 +1,89 @@
+﻿@model IEnumerable<PlanTributario.Models.Prontuario>
+
+@{
+    ViewData["Title"] = "Arquivo de Prontuários";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 text-primary mb-0"><i class="fas fa-archive"></i> Arquivo Clínico</h1>
+            <p class="text-muted">Histórico completo de atendimentos e avaliações</p>
+        </div>
+        <a asp-controller="Lancamentoes" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar ao Financeiro
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Data</th>
+                            <th>Paciente</th>
+                            <th>História Clínica / Queixa</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    <i class="fas fa-notes-medical fa-3x mb-3 d-block opacity-25"></i>
+                                    Nenhum prontuário gerado ainda.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    @item.DataAtendimento.ToString("dd/MM/yyyy")
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">@item.Paciente.Nome</div>
+                                    <small class="text-muted">Lançamento: #@item.LancamentoId</small>
+                                </td>
+                                <td>
+                                    <span class="text-truncate d-inline-block" style="max-width: 350px;" title="@item.QueixaPrincipal">
+                                        @(string.IsNullOrEmpty(item.QueixaPrincipal) ? "Sem queixa registrada" : item.QueixaPrincipal)
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group shadow-sm">
+                                        <a asp-action="Detalhes" asp-route-id="@item.Id" class="btn btn-sm btn-primary" title="Imprimir PDF">
+                                            <i class="fas fa-print"></i> Ver e Imprimir
+                                        </a>
+                                        <a asp-action="Editar" asp-route-id="@item.Id" class="btn btn-sm btn-warning" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table thead th {
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        color: #666;
+    }
+
+    .card {
+        border-radius: 15px;
+    }
+
+    .btn-group .btn {
+        padding: 0.4rem 0.8rem;
+    }
+</style>

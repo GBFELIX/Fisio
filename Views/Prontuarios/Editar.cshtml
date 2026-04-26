@@ -1,0 +1,201 @@
+﻿@model PlanTributario.Models.Prontuario
+
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        @* Cor mudada para warning (amarelo) para indicar edição *@
+        <div class="card-header bg-warning text-dark p-3 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="fas fa-edit me-2"></i> Editar Prontuário Clínico</h4>
+            <span class="badge bg-dark">Paciente: @(Model.Paciente?.Nome ?? ViewBag.NomePaciente)</span>
+        </div>
+        <div class="card-body">
+            <form asp-action="Editar" method="post">
+                <div asp-validation-summary="All" class="text-danger small"></div>
+
+                @* CAMPOS ESCONDIDOS CRUCIALMENTE IMPORTANTES PARA EDITAR *@
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="LancamentoId" />
+                <input type="hidden" asp-for="PacienteId" />
+
+                <ul class="nav nav-pills nav-justified mb-4 border p-2 rounded bg-light" id="prontuarioTabs" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#pag1" type="button">1. Identificação</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#pag2" type="button">2. Avaliação</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#pag3" type="button">3. Exame Clínico</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#pag4" type="button">4. Sinais/Dor</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#pag5" type="button">5. Conduta</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+
+                    <div class="tab-pane fade show active" id="pag1" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Nome do Paciente</label>
+                                <input type="text" class="form-control form-control-lg bg-light" value="@(Model.Paciente?.Nome ?? ViewBag.NomePaciente)" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="HistoriaClinica" class="form-label fw-bold">História Clínica</label>
+                                <input asp-for="HistoriaClinica" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="HabitosVida" class="form-label fw-bold">Hábitos de Vida</label>
+                                <input asp-for="HabitosVida" class="form-control" />
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="TratamentosRealizados" class="form-label fw-bold">Tratamentos Já Realizados</label>
+                                <textarea asp-for="TratamentosRealizados" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pag2" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label asp-for="QueixaPrincipal" class="form-label fw-bold">Queixa Principal (QP)</label>
+                                <textarea asp-for="QueixaPrincipal" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="HMA" class="form-label fw-bold">História da Moléstia Atual (HMA)</label>
+                                <textarea asp-for="HMA" class="form-control" rows="4"></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="HMP" class="form-label fw-bold">História Médica Pregressa (HMP)</label>
+                                <textarea asp-for="HMP" class="form-control" rows="4"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="AntecedentesPessoais" class="form-label fw-bold">Antecedentes Pessoais</label>
+                                <textarea asp-for="AntecedentesPessoais" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="AntecedentesFamiliares" class="form-label fw-bold">Antecedentes Familiares</label>
+                                <textarea asp-for="AntecedentesFamiliares" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pag3" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">3.1 APRESENTAÇÃO DO PACIENTE</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" asp-for="ApresentacaoPaciente" value="Deambulando">
+                                    <label class="form-check-label">Deambulando</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" asp-for="ApresentacaoPaciente" value="Deambulando com apoio">
+                                    <label class="form-check-label">Deambulando com apoio/auxílio</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" asp-for="ApresentacaoPaciente" value="Cadeira de rodas">
+                                    <label class="form-check-label">Cadeira de rodas</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">3.5 INSPEÇÃO/PALPAÇÃO</label>
+                                <select asp-for="InspecaoPalpacao" class="form-select">
+                                    <option value="Normal">Normal</option>
+                                    <option value="Edema">Edema</option>
+                                    <option value="Cicatrização incompleta">Cicatrização incompleta</option>
+                                    <option value="Eritemas">Eritemas</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="ExamesComplementares" class="form-label fw-bold">3.2 EXAMES COMPLEMENTARES</label>
+                                <input asp-for="ExamesComplementares" class="form-control" />
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="UsaMedicamentos" class="form-label fw-bold">3.3 USA MEDICAMENTOS</label>
+                                <input asp-for="UsaMedicamentos" class="form-control" />
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="RealizouCirurgia" class="form-label fw-bold">3.4 REALIZOU CIRURGIA</label>
+                                <input asp-for="RealizouCirurgia" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pag4" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold">Intensidade da Dor (EVA)</label>
+                                <div class="d-flex justify-content-between border p-3 rounded bg-light shadow-sm">
+                                    @for (int i = 0; i <= 10; i++)
+                                    {
+                                        <div class="text-center">
+                                            <input type="radio" asp-for="NivelDor" value="@i" class="btn-check" id="dor-@(i)" autocomplete="off">
+                                            @{
+                                                var cor = i <= 2 ? "success" : (i <= 7 ? "warning" : "danger");
+                                            }
+                                            <label class="btn btn-outline-@cor" for="dor-@(i)">@i</label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="PressaoArterial" class="form-label fw-bold">PA</label>
+                                <input asp-for="PressaoArterial" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Saturacao" class="form-label fw-bold">SpO2 (%)</label>
+                                <input asp-for="Saturacao" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="FrequenciaCardiaca" class="form-label fw-bold">FC (bpm)</label>
+                                <input asp-for="FrequenciaCardiaca" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pag5" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label asp-for="PlanoTerapeutico" class="form-label fw-bold">Plano Terapêutico</label>
+                                <textarea asp-for="PlanoTerapeutico" class="form-control" rows="5"></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="Evolucao" class="form-label fw-bold">Evolução do Quadro</label>
+                                <textarea asp-for="Evolucao" class="form-control" rows="5"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-5 border-top pt-3 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                    <button type="submit" class="btn btn-warning btn-lg px-5 shadow fw-bold">
+                        <i class="fas fa-sync-alt"></i> Atualizar Atendimento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .nav-pills .nav-link.active {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+    }
+
+    .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+    }
+
+    textarea {
+        resize: none;
+    }
+</style>

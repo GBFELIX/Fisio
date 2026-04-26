@@ -1,0 +1,239 @@
+﻿@model PlanTributario.Models.Prontuario
+
+@{
+    Layout = null; // Remove o menu do sistema para a impressão
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prontuário - @Model.Paciente.Nome</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background-color: white !important;
+                padding: 0;
+                margin: 0;
+            }
+
+            .paper {
+                border: none !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+            }
+        }
+
+        body {
+            background-color: #f0f0f0;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .paper {
+            background-color: white;
+            width: 21cm;
+            min-height: 29.7cm;
+            padding: 1.5cm;
+            margin: 1cm auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header-logos {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo-box {
+            width: 90px;
+            height: 90px;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        h5 {
+            background-color: #f2f2f2;
+            padding: 8px;
+            border-left: 5px solid #333;
+            font-weight: bold;
+            margin-top: 25px;
+            font-size: 1.1rem;
+        }
+
+        .field-label {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            color: #333;
+        }
+
+        .field-value {
+            border-bottom: 1px dotted #ccc;
+            padding-left: 5px;
+            display: inline-block;
+            width: 100%;
+            min-height: 25px;
+            margin-bottom: 10px;
+        }
+
+        .signature-space {
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .line {
+            border-top: 1px solid #000;
+            width: 350px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="no-print text-center py-4">
+        <button onclick="window.print()" class="btn btn-primary btn-lg shadow">
+            <i class="fas fa-file-pdf"></i> GERAR PDF / IMPRIMIR
+        </button>
+        <a asp-action="Index" class="btn btn-secondary btn-lg shadow ms-2">VOLTAR</a>
+    </div>
+
+    <div class="paper">
+        <div class="header-logos">
+            @* <div class="logo-box">
+                <strong>SUA LOGO<br>AQUI</strong>
+            </div> *@
+            <div class="logo-box">
+                <img src="~/crefito.png" style="width: 70px;" alt="Logo CREFITO">
+            </div>
+            <div class="text-center">
+                <h4 class="mb-0 fw-bold">FICHA DE AVALIAÇÃO FISIOTERAPÊUTICA</h4>
+                <small>Resolução COFFITO nº 414/2012</small><br>
+                <small class="fw-bold text-uppercase">Conselho Regional de Fisioterapia - CREFITO-8</small>
+            </div>
+            <div class="logo-box">
+                <img src="~/crefito.png" style="width: 70px;" alt="Logo CREFITO">
+            </div>
+        </div>
+
+        <div class="row">
+            @* <div class="col-6">
+                <span class="field-label">ID DO PRONTUÁRIO:</span> #@Model.Id
+            </div> *@
+            <div class="col-6 text-end">
+                <span class="field-label">DATA DA AVALIAÇÃO:</span> @Model.DataAtendimento.ToString("dd/MM/yyyy")
+            </div>
+        </div>
+
+        <h5>1. IDENTIFICAÇÃO DO PACIENTE</h5>
+        <div class="row g-2 mt-1">
+            <div class="col-12">
+                <span class="field-label">NOME:</span>
+                <span class="field-value">@Model.Paciente.Nome</span>
+            </div>
+            <div class="col-4">
+                <span class="field-label">NASCIMENTO:</span>
+                <span class="field-value">@(Model.Paciente.DataNascimento?.ToString("dd/MM/yyyy") ?? "--/--/----")</span>
+            </div>
+            <div class="col-4">
+                <span class="field-label">SEXO:</span>
+                <span class="field-value">@Model.Paciente.Sexo</span>
+            </div>
+            <div class="col-4">
+                <span class="field-label">TELEFONE:</span>
+                <span class="field-value">@Model.Paciente.Telefone</span>
+            </div>
+            <div class="col-6">
+                <span class="field-label">PROFISSÃO:</span>
+                <span class="field-value">@Model.Paciente.Profissao</span>
+            </div>
+            <div class="col-6">
+                <span class="field-label">ESTADO CIVIL:</span>
+                <span class="field-value">@Model.Paciente.EstadoCivil</span>
+            </div>
+        </div>
+
+        <h5>2. AVALIAÇÃO</h5>
+        <div class="mt-2">
+            <div class="mb-3">
+                <span class="field-label">QUEIXA PRINCIPAL (QP):</span>
+                <div class="field-value">@Model.QueixaPrincipal</div>
+            </div>
+            <div class="mb-3">
+                <span class="field-label">HISTÓRIA DA MOLÉSTIA ATUAL (HMA):</span>
+                <div class="field-value">@Model.HMA</div>
+            </div>
+            <div class="mb-3">
+                <span class="field-label">HISTÓRIA MÉDICA PREGRESSA (HMP):</span>
+                <div class="field-value">@Model.HMP</div>
+            </div>
+            <div class="mb-3">
+                <span class="field-label">ANTECEDENTES E TRATAMENTOS:</span>
+                <div class="field-value">@Model.TratamentosRealizados</div>
+            </div>
+        </div>
+
+        <h5>3. EXAME CLÍNICO/FÍSICO</h5>
+        <div class="mt-2">
+            <div class="mb-3">
+                <span class="field-label">APRESENTAÇÃO:</span>
+                <div class="field-value">@Model.ApresentacaoPaciente</div>
+            </div>
+            <div class="mb-3">
+                <span class="field-label">INSPEÇÃO/PALPAÇÃO:</span>
+                <div class="field-value">@Model.InspecaoPalpacao</div>
+            </div>
+            <div class="mb-3">
+                <span class="field-label">MEDICAMENTOS:</span>
+                <div class="field-value">@Model.UsaMedicamentos</div>
+            </div>
+            <div class="mb-3">
+                <span class="field-label">CIRURGIAS:</span>
+                <div class="field-value">@Model.RealizouCirurgia</div>
+            </div>
+        </div>
+
+        <h5>4. SINAIS VITAIS E DOR</h5>
+        <div class="row text-center mb-3">
+            <div class="col-4 border-end"><strong>PA:</strong> @Model.PressaoArterial</div>
+            <div class="col-4 border-end"><strong>SpO2:</strong> @Model.Saturacao</div>
+            <div class="col-4"><strong>FC:</strong> @Model.FrequenciaCardiaca</div>
+        </div>
+        <div class="p-2 border rounded text-center @(Model.NivelDor > 7 ? "bg-danger text-white" : "bg-light")">
+            <strong>INTENSIDADE DA DOR (EVA):</strong> @Model.NivelDor / 10
+            <span>(@(Model.NivelDor <= 2 ? "Leve" : Model.NivelDor <= 7 ? "Moderada" : "Intensa"))</span>
+        </div>
+
+        <h5>4. PLANO TERAPÊUTICO E EVOLUÇÃO</h5>
+        <div class="mt-2">
+            <div class="mb-3">
+                <span class="field-label">CONDUTA / OBJETIVOS:</span>
+                <div class="field-value">@Model.PlanoTerapeutico</div>
+            </div>
+            <div class="mb-3">
+                <span class="field-label">EVOLUÇÃO E OBSERVAÇÕES:</span>
+                <div class="field-value" style="min-height: 150px;">@Model.Evolucao</div>
+            </div>
+        </div>
+
+        <div class="signature-space">
+            <div class="line"></div>
+            <p class="mb-0 fw-bold mt-2">ASSINATURA DO FISIOTERAPEUTA</p>
+            <small>Registro CREFITO nº ___________</small>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+﻿@model PlanTributario.Models.Paciente
+
+@{
+    ViewData["Title"] = "Detalhes do Paciente";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow border-0">
+                <div class="card-header bg-info text-white p-3 d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-user-check me-2"></i> Ficha de Identificação</h4>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-light btn-sm">
+                        <i class="fas fa-edit"></i> Editar Dados
+                    </a>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h2 class="text-primary fw-bold">@Model.Nome</h2>
+                            <p class="text-muted"><i class="fas fa-id-card me-2"></i> Paciente ID #@Model.Id</p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <span class="badge bg-light text-dark border p-2">
+                                <i class="fas fa-calendar-alt me-1"></i> Cadastrado em @Model.DataCadastro?.ToString("dd/MM/yyyy")
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded bg-light h-100">
+                                <h6 class="text-uppercase fw-bold text-muted border-bottom pb-2 mb-3">Informações Pessoais</h6>
+                                <p><strong>Data de Nascimento:</strong> @(Model.DataNascimento?.ToString("dd/MM/yyyy") ?? "Não informada")</p>
+                                <p><strong>Sexo:</strong> @Model.Sexo</p>
+                                <p><strong>Estado Civil:</strong> @Model.EstadoCivil</p>
+                                <p><strong>Naturalidade:</strong> @Model.Naturalidade</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded bg-light h-100">
+                                <h6 class="text-uppercase fw-bold text-muted border-bottom pb-2 mb-3">Contato e Ocupação</h6>
+                                <p><strong>Telefone:</strong> <span class="text-success fw-bold">@Model.Telefone</span></p>
+                                <p><strong>Profissão:</strong> @Model.Profissao</p>
+                                <p><strong>Cidade:</strong> @Model.Cidade</p>
+                                <p><strong>Bairro:</strong> @Model.Bairro</p>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="p-3 border rounded bg-light">
+                                <h6 class="text-uppercase fw-bold text-muted border-bottom pb-2 mb-3">Endereço Residencial</h6>
+                                <p class="mb-0">@Model.EnderecoResidencial</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5 pt-3 border-top no-print">
+                        <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar para Lista
+                        </a>
+                        <div class="btn-group">
+                            <button onclick="window.print()" class="btn btn-outline-dark">
+                                <i class="fas fa-print me-2"></i>Imprimir Ficha
+                            </button>
+                            <a asp-controller="Prontuarios" asp-action="Create" asp-route-pacienteId="@Model.Id" class="btn btn-success px-4">
+                                <i class="fas fa-file-medical me-2"></i>Iniciar Atendimento
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    p {
+        margin-bottom: 0.5rem;
+    }
+
+    @@media print {
+        .no-print, .btn, .navbar, footer {
+            display: none !important;
+        }
+
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .container {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+    }
+</style>

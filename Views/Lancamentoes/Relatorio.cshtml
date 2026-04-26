@@ -1,0 +1,159 @@
+﻿@model IEnumerable<PlanTributario.Models.Lancamento>
+
+@{
+    ViewData["Title"] = "Relatório de Faturamento";
+    var totalBruto = Model.Sum(x => x.ValorBruto);
+    var proLaboreFatorR = totalBruto * 0.28m; // Regra dos 28% para pagar menos imposto
+    var impostoEstimado = totalBruto * 0.06m; // Alíquota do Anexo III
+}
+
+<div class="container mt-4 no-print">
+    <div class="card shadow-sm border-0 mb-4 bg-primary text-white">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="mb-0"><i class="fas fa-file-invoice-dollar"></i> Relatório Mensal</h3>
+                <p class="mb-0 opacity-75">Consolidado para Contabilidade e Fator R</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button onclick="window.print()" class="btn btn-light">
+                    <i class="fas fa-print"></i> Imprimir / Salvar PDF
+                </button>
+                <a asp-action="Index" class="btn btn-outline-light">Voltar</a>
+            </div>
+        </div>
+    </div>
+
+    @* Filtro de Período *@
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Mês Referência</label>
+                    <select name="mes" class="form-select">
+                        <option value="1">Janeiro</option>
+                        <option value="2">Fevereiro</option>
+                        <option value="3">Março</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Maio</option>
+                        <option value="6">Junho</option>
+                        <option value="7">Julho</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Setembro</option>
+                        <option value="10">Outubro</option>
+                        <option value="11">Novembro</option>
+                        <option value="12">Dezembro</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-dark w-100">Filtrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* ÁREA DO RELATÓRIO (O QUE SAI NO PDF) *@
+<div class="container bg-white p-5 shadow rounded printable-content">
+    <div class="text-center mb-5">
+        <h2 class="text-uppercase fw-bold">Demonstrativo de Faturamento Profissional</h2>
+        <p class="mb-0">Profissional: Fisioterapeuta</p>
+        <p>Período: @ViewBag.Mes/@ViewBag.Ano</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-4">
+            <div class="border p-3 text-center rounded">
+                <small class="text-muted d-block">FATURAMENTO BRUTO</small>
+                <span class="h4 fw-bold">@totalBruto.ToString("C")</span>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="border p-3 text-center rounded bg-light">
+                <small class="text-muted d-block text-primary">PRÓ-LABORE (FATOR R 28%)</small>
+                <span class="h4 fw-bold text-primary">@proLaboreFatorR.ToString("C")</span>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="border p-3 text-center rounded">
+                <small class="text-muted d-block text-danger">DAS ESTIMADO (6%)</small>
+                <span class="h4 fw-bold text-danger">@impostoEstimado.ToString("C")</span>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered mt-4">
+        <thead class="table-light">
+            <tr>
+                <th>Data</th>
+                <th>Paciente / Descrição</th>
+                <th>Tipo</th>
+                <th class="text-end">Valor Bruto</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Data.ToString("dd/MM/yyyy")</td>
+                    <td>@item.Descricao</td>
+                    <td>@item.TipoAtendimento</td>
+                    <td class="text-end">@item.ValorBruto.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot class="table-secondary fw-bold">
+            <tr>
+                <td colspan="3" class="text-end">TOTAL CONSOLIDADO NO MÊS</td>
+                <td class="text-end">@totalBruto.ToString("C")</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <p class="small text-muted">
+                * Este relatório serve como base para o cálculo do Simples Nacional (Fator R).
+                Para garantir a alíquota de 6%, o Pró-labore declarado deve ser de, no mínimo, @proLaboreFatorR.ToString("C").
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-5 pt-5 text-center signature-area">
+        <hr class="w-50 mx-auto" />
+        <p class="mb-0">Assinatura do Profissional Responsável</p>
+    </div>
+</div>
+
+<style>
+    @@media print {
+        .no-print, .main-footer, .navbar {
+            display: none !important;
+        }
+
+        body {
+            background-color: white !important;
+        }
+
+        .printable-content {
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+        }
+
+        .container {
+            max-width: 100% !important;
+        }
+    }
+
+    .signature-area {
+        margin-top: 100px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Define o mês atual no select ao carregar
+        document.querySelector('select[name="mes"]').value = "@ViewBag.Mes";
+    </script>
+}

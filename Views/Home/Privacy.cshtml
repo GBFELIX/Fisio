@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Nossa Política de Privacidade";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="heart-icon mb-4">
+                <i class="fas fa-heart fa-4x text-danger animate-pulse"></i>
+            </div>
+
+            <h1 class="display-4 fw-bold text-dark mb-4">Termos de Amor & Futuro</h1>
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-body p-5 bg-light">
+                    <p class="lead text-muted italic">
+                        "Privacidade aqui significa que tudo o que construímos juntos está guardado no lugar mais seguro do mundo: o nosso plano de vida."
+                    </p>
+
+                    <hr class="my-4">
+
+                    <div class="text-start">
+                        <h5 class="fw-bold"><i class="fas fa-shield-alt me-2 text-primary"></i> Cláusula 1: Proteção de Dados</h5>
+                        <p>Seus sonhos, cansaços e conquistas diárias são criptografados com amor. Ninguém tem acesso à nossa jornada, exceto nós dois.</p>
+
+                        <h5 class="fw-bold mt-4"><i class="fas fa-home me-2 text-success"></i> Cláusula 2: O Alvo</h5>
+                        <p>Cada prontuário salvo e cada lançamento feito é um tijolo a mais no nosso futuro, cada dia mais próximos do nosso sonho!</p>
+
+                        <h5 class="fw-bold mt-4"><i class="fas fa-infinity me-2 text-info"></i> Cláusula 3: Validade</h5>
+                        <p>Este contrato de parceria não tem data de expiração. É por tempo indeterminado, renovado a cada café da manhã e a cada meta batida.</p>
+                    </div>
+
+                    <div class="mt-5">
+                        <h4 class="text-dark fw-bold">Eu te amo, Gabriel!</h4>
+                        <p class="text-muted small">Assinado digitalmente pelo seu maior fã e desenvolvedor favorito.</p>
+                    </div>
+                </div>
+            </div>
+
+            <a asp-action="Index" class="btn btn-outline-secondary mt-4">
+                <i class="fas fa-arrow-left"></i> Voltar ao Trabalho
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .card {
+        border-top: 5px solid #dc3545 !important;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+    }
+</style>
