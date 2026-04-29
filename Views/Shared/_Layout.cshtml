@@ -95,6 +95,12 @@
                                 <i class="fas fa-dollar-sign me-1"></i> Financeiro
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Agendamentoes" ? "active" : "")"
+                               asp-area="" asp-controller="Agendamentoes" asp-action="Index">
+                                <i class="fas fa-calendar-alt me-1"></i> Agendamentos
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

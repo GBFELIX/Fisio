@@ -20,23 +20,24 @@ namespace DbContext_PlanTributario
             modelBuilder.Entity<Lancamento>().ToTable("Lancamentoes");
 
             // Resolve o aviso do Decimal 
-            modelBuilder.Entity<Lancamento>()
-                .Property(p => p.ValorBruto)
-                .HasColumnType("decimal(18,2)");
+            //modelBuilder.Entity<Lancamento>()
+            //    .Property(p => p.ValorBruto)
+            //    .HasColumnType("decimal(18,2)");
 
-            modelBuilder.Entity<Lancamento>()
-                .Property(p => p.ProLabore)
-                .HasColumnType("decimal(18,2)");
+            //modelBuilder.Entity<Lancamento>()
+            //    .Property(p => p.ProLabore)
+            //    .HasColumnType("decimal(18,2)");
 
-            modelBuilder.Entity<Lancamento>()
-                .Property(p => p.ImpostoDas)
-                .HasColumnType("decimal(18,2)");
+            //modelBuilder.Entity<Lancamento>()
+            //    .Property(p => p.ImpostoDas)
+            //    .HasColumnType("decimal(18,2)");
 
-            modelBuilder.Entity<Lancamento>()
-                .Property(p => p.Inss)
-                .HasColumnType("decimal(18,2)");
+            //modelBuilder.Entity<Lancamento>()
+            //    .Property(p => p.Inss)
+            //    .HasColumnType("decimal(18,2)");
         }
         public DbSet<PlanTributario.Models.Paciente> Paciente { get; set; } = default!;
         public DbSet<PlanTributario.Models.Prontuario> Prontuario { get; set; } = default!;
+        public DbSet<Agendamento> Agendamento { get; set; } = default!;
     }
 }

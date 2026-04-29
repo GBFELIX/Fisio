@@ -1,24 +1,36 @@
 ﻿using DbContext_PlanTributario;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddDbContext<Data_>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Data_") ?? throw new InvalidOperationException("Connection string 'Data_' not found.")));
 
 //builder.Services.AddDbContext<Data_>(options =>
 //    options.UseSqlite("Data Source=Planejamento.db"));
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var context = services.GetRequiredService<Data_>();
-//    context.Database.Migrate(); // Cria o banco e as tabelas se não existirem
-//}
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+// 2. A MÁGICA DO EXECUTÁVEL: Automação do Banco de Dados
+// Esse bloco garante que o banco 'Planejamento.db' seja criado no PC dela
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<Data_>();
+        // Migrate() aplica as migrations e cria o arquivo .db automaticamente
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        // Se houver erro na criação do banco, ele avisa no console
+        Console.WriteLine("Erro ao criar/atualizar banco SQLite: " + ex.Message);
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -34,18 +46,9 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+// 3. Rotas simplificadas (A rota default já cobre as outras se os nomes baterem)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Lancamentoes}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
-    name: "Lancamento",
-    pattern: "{controller=Lancamentoes}/{action=Index}/{id?}");
-app.MapControllerRoute(
-    name: "Prontuarios",
-    pattern: "{controller=Prontuarios}/{action=index}/{id?}");
-app.MapControllerRoute(
-    name: "Pacientes",
-    pattern: "{controller=Pacientes}/{action=index}/{id?}");
 
 app.Run();

@@ -1,0 +1,238 @@
+﻿@{
+    ViewData["Title"] = "Agenda de Atendimentos";
+}
+
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> Minha Agenda</h4>
+            <button class="btn btn-light btn-sm fw-bold" onclick="novoAgendamento()">
+                <i class="fas fa-plus"></i> Novo Horário
+            </button>
+        </div>
+        <div class="card-body">
+            <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAgendamento" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-calendar-plus me-2"></i> Novo Horário</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formAgendamento">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Paciente</label>
+                        <select id="PacienteId" class="form-select" required onchange="atualizarTitulo()">
+                            <option value="">-- Selecione o Cliente --</option>
+                            @foreach (var p in ViewBag.Pacientes)
+                            {
+                                <option value="@p.Id">@p.Nome</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Título do Evento</label>
+                        <input type="text" id="Titulo" class="form-control" placeholder="Ex: Atendimento Fisioterapia" required />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Início</label>
+                            <input type="datetime-local" id="Inicio" class="form-control" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Término</label>
+                            <input type="datetime-local" id="Fim" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Cor no Calendário</label>
+                        <select id="Cor" class="form-select">
+                            <option value="#0d6efd">Azul (Padrão)</option>
+                            <option value="#198754">Verde (Avaliação)</option>
+                            <option value="#dc3545">Vermelho (Urgência)</option>
+                            <option value="#ffc107">Amarelo (Retorno)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="excluir()">
+                        <i class="fas fa-trash"></i> Excluir
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary px-4" onclick="salvarAgendamento()">
+                        <i class="fas fa-save"></i> Agendar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="AgendamentoId" value="0" />
+
+<div class="modal-footer bg-light justify-content-between">
+    <button type="button" class="btn btn-outline-danger" id="btnExcluir" style="display:none;" onclick="excluir()">
+        <i class="fas fa-trash"></i> Excluir
+    </button>
+    <div>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary px-4" onclick="salvarAgendamento()">
+            <i class="fas fa-save"></i> Salvar
+        </button>
+    </div>
+</div>
+
+@section Scripts {
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script>
+        var calendar;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                locale: 'pt-br',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                buttonText: { today: 'Hoje', month: 'Mês', week: 'Semana', day: 'Dia' },
+                slotMinTime: '07:00:00',
+                slotMaxTime: '21:00:00',
+                allDaySlot: false,
+                events: '/Agendamentoes/GetAgendamentos',
+                editable: true,
+                selectable: true,
+                eventClick: function(info) {
+                    abrirModalEdicao(info.event.id);
+                }
+            });
+            calendar.render();
+        });
+
+        function novoAgendamento() {
+            document.getElementById('formAgendamento').reset();
+            document.getElementById('AgendamentoId').value = "0"; // Reseta para modo criação
+            document.querySelector('.modal-title').innerHTML = '<i class="fas fa-calendar-plus me-2"></i> Novo Horário';
+
+            let inicio = new Date();
+            inicio.setMinutes(inicio.getMinutes() - inicio.getTimezoneOffset());
+            let fim = new Date(inicio.getTime());
+            fim.setHours(fim.getHours() + 1);
+
+            document.getElementById('Inicio').value = inicio.toISOString().slice(0, 16);
+            document.getElementById('Fim').value = fim.toISOString().slice(0, 16);
+
+            new bootstrap.Modal(document.getElementById('modalAgendamento')).show();
+        }
+
+        function abrirModalEdicao(id) {
+            fetch('/Agendamentoes/GetAgendamentoById/' + id)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('AgendamentoId').value = data.id;
+                    document.getElementById('PacienteId').value = data.pacienteId;
+                    document.getElementById('Titulo').value = data.titulo;
+                    document.getElementById('Inicio').value = data.inicio;
+                    document.getElementById('Fim').value = data.fim;
+                    document.getElementById('Cor').value = data.cor;
+
+                    document.querySelector('.modal-title').innerHTML = '<i class="fas fa-edit me-2"></i> Editar Horário';
+                    new bootstrap.Modal(document.getElementById('modalAgendamento')).show();
+                })
+                .catch(err => alert("Erro ao carregar dados: " + err));
+        }
+
+        function salvarAgendamento() {
+            const id = document.getElementById('AgendamentoId').value;
+            // Define a rota com base no ID (0 = Novo, >0 = Editar)
+            const url = id === "0" ? '/Agendamentoes/Create' : '/Agendamentoes/Edit';
+
+            const dados = {
+                Id: parseInt(id),
+                PacienteId: parseInt(document.getElementById('PacienteId').value),
+                Titulo: document.getElementById('Titulo').value,
+                Inicio: document.getElementById('Inicio').value,
+                Fim: document.getElementById('Fim').value,
+                Cor: document.getElementById('Cor').value
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            })
+            .then(response => {
+                if (response.ok) {
+                    const modalEl = document.getElementById('modalAgendamento');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+
+                    calendar.refetchEvents(); // Atualiza o quadro sem F5
+                } else {
+                    alert("Erro ao salvar agendamento.");
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+        }
+        function excluir(){
+                const id = document.getElementById('AgendamentoId').value;
+                if (confirm("Tem certeza que deseja excluir este agendamento?")) {
+                    fetch('/Agendamentoes/Delete/' + id, { method: 'POST' })
+                        .then(response => {
+                            if (response.ok) {
+                                const modalEl = document.getElementById('modalAgendamento');
+                                const modal = bootstrap.Modal.getInstance(modalEl);
+                                if (modal) modal.hide();
+    
+                                calendar.refetchEvents(); // Atualiza o quadro sem F5
+                            } else {
+                                alert("Erro ao excluir agendamento.");
+                            }
+                        })
+                        .catch(error => console.error('Erro:', error));
+                }
+        }
+        function atualizarTitulo() {
+            const select = document.getElementById('PacienteId');
+            const nome = select.options[select.selectedIndex].text;
+            if(select.value !== "") {
+                document.getElementById('Titulo').value = "Atendimento: " + nome;
+            }
+        }
+
+        document.getElementById('Inicio').addEventListener('change', function() {
+            let dataInicio = new Date(this.value);
+            if (!isNaN(dataInicio.getTime())) {
+                let dataFim = new Date(dataInicio.getTime());
+                dataFim.setHours(dataFim.getHours() + 1);
+                let isoFim = new Date(dataFim.getTime() - dataFim.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+                document.getElementById('Fim').value = isoFim;
+            }
+        });
+    </script>
+}
+<style>
+    #calendar {
+        max-height: 700px;
+        background-color: white;
+        padding: 10px;
+        border-radius: 8px;
+    }
+    /* Estiliza as cores dos eventos para ficarem mais suaves */
+    .fc-event {
+        cursor: pointer;
+        border: none !important;
+        padding: 2px;
+    }
+</style>

@@ -207,9 +207,9 @@
 
         <h5>4. SINAIS VITAIS E DOR</h5>
         <div class="row text-center mb-3">
-            <div class="col-4 border-end"><strong>PA:</strong> @Model.PressaoArterial</div>
-            <div class="col-4 border-end"><strong>SpO2:</strong> @Model.Saturacao</div>
-            <div class="col-4"><strong>FC:</strong> @Model.FrequenciaCardiaca</div>
+            <div class="col-4 border-end"><strong>PA:</strong> @Model.PressaoArterial mmHg</div>
+            <div class="col-4 border-end"><strong>SpO2:</strong> @Model.Saturacao %</div>
+            <div class="col-4"><strong>FC:</strong> @Model.FrequenciaCardiaca bpm</div>
         </div>
         <div class="p-2 border rounded text-center @(Model.NivelDor > 7 ? "bg-danger text-white" : "bg-light")">
             <strong>INTENSIDADE DA DOR (EVA):</strong> @Model.NivelDor / 10

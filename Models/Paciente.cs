@@ -11,6 +11,10 @@ namespace PlanTributario.Models
         [Display(Name = "Nome Completo")]
         public string Nome { get; set; }
 
+        [Required(ErrorMessage = "O CPF é obrigatório")]
+        [Display(Name = "CPF")]
+        public string? Cpf { get; set; } = string.Empty;
+
         [Display(Name = "Data de Nascimento")]
         [DataType(DataType.Date)]
         public DateTime? DataNascimento { get; set; }
